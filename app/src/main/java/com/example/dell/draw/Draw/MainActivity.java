@@ -1,19 +1,61 @@
-package com.example.dell.draw;
+package com.example.dell.draw.Draw;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.example.dell.draw.R;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String TAG = "MainActivity";
+    private  static final int REQUEST_STORAGE_GROUP_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        requestPermission();
     }
+    // 下载获取权限
+    public  void requestPermission(){
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                ||ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "没有权限: ");
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.MOUNT_FORMAT_FILESYSTEMS,
+                    Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS}, REQUEST_STORAGE_GROUP_CODE);
+            return;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case  REQUEST_STORAGE_GROUP_CODE :
+                        if (grantResults.length>0&&
+                                grantResults[0]==PackageManager.PERMISSION_GRANTED
+                                &&grantResults[1]==PackageManager.PERMISSION_GRANTED
+                                &&grantResults[2]==PackageManager.PERMISSION_GRANTED
+                                &&grantResults[3]==PackageManager.PERMISSION_GRANTED){
+                            Toast.makeText(MainActivity.this,"权限获取成功",Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+        }
+    }
+
     /*
      * 创建选项菜单
      * */
